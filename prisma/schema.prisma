@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  date        DateTime
+  createdAt   DateTime @default(now())
+  media       Media[]
+}
+
+model Media {
+  id        String   @id @default(uuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  url       String
+  type      String   // 'IMAGE' | 'VIDEO'
+  createdAt DateTime @default(now())
+}
