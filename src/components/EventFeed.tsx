@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { createEventAction, deleteEventAction } from "@/app/actions/events";
+import { createEventAction, deleteEventAction, isBlobConfiguredAction } from "@/app/actions/events";
+import { upload } from "@vercel/blob/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -68,8 +69,17 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<{ url: string; type: string; name: string }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isBlobConfigured, setIsBlobConfigured] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   // States related to carousel have been refactored inside the modular EventCard component.
+
+  // Fetch Vercel Blob configurations on mount to toggle direct client uploading
+  useEffect(() => {
+    isBlobConfiguredAction()
+      .then((configured) => setIsBlobConfigured(configured))
+      .catch((err) => console.error("Failed to query Vercel Blob status:", err));
+  }, []);
 
   // 1. Establish SSE stream for live auto-updates
   useEffect(() => {
@@ -141,7 +151,7 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
   };
 
   // 3. Submit Admin Form
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
@@ -151,6 +161,78 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
       return;
     }
 
+    const handlePostSuccess = () => {
+      setSuccess("Event posted successfully and broadcasted in real-time!");
+      setTitle("");
+      setDescription("");
+      setDate("");
+      setSelectedFiles([]);
+      setPreviews([]);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      setTimeout(() => setSuccess(null), 4000);
+    };
+
+    // If Vercel Blob cloud is configured, perform secure direct client-side uploads
+    // to bypass the strict Vercel 4.5 MB request body limit completely.
+    if (isBlobConfigured && selectedFiles.length > 0) {
+      setIsUploading(true);
+      setError(null);
+
+      try {
+        const uploadedUrls: { url: string; type: "IMAGE" | "VIDEO" }[] = [];
+
+        for (const file of selectedFiles) {
+          // Double validation on the client side before using bandwidth
+          const ALLOWED_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
+          const ALLOWED_VIDEO_EXTENSIONS = [".mp4", ".mov", ".webm", ".m4v"];
+          const dotIndex = file.name.lastIndexOf(".");
+          const fileExt = dotIndex !== -1 ? file.name.slice(dotIndex).toLowerCase() : "";
+
+          const isImage = file.type.startsWith("image/");
+          const isVideo = file.type.startsWith("video/");
+
+          const isAllowedImage = isImage && ALLOWED_IMAGE_EXTENSIONS.includes(fileExt);
+          const isAllowedVideo = isVideo && ALLOWED_VIDEO_EXTENSIONS.includes(fileExt);
+
+          if (!isAllowedImage && !isAllowedVideo) {
+            throw new Error(`Security Check Failed: The file "${file.name}" has an invalid extension or content-type mismatch. Only standard web images (.png, .jpg, .jpeg, .webp, .gif) and videos (.mp4, .mov, .webm, .m4v) are allowed.`);
+          }
+
+          // Direct client browser upload to Vercel Blob CDN using API token authorization
+          const blob = await upload(file.name, file, {
+            access: "public",
+            handleUploadUrl: "/api/media/upload",
+          });
+
+          uploadedUrls.push({
+            url: blob.url,
+            type: isVideo ? "VIDEO" : "IMAGE",
+          });
+        }
+
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("description", description);
+        formData.append("date", date);
+        formData.append("uploadedUrls", JSON.stringify(uploadedUrls));
+
+        startTransition(async () => {
+          const result = await createEventAction(formData);
+          setIsUploading(false);
+          if (result.success) {
+            handlePostSuccess();
+          } else {
+            setError(result.error || "Failed to create event.");
+          }
+        });
+      } catch (err: any) {
+        setIsUploading(false);
+        setError(err.message || "Failed to upload files directly to Vercel Blob CDN.");
+      }
+      return;
+    }
+
+    // Local/development fallback: Standard multipart raw FormData upload (where there are no Vercel body limits)
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
@@ -163,17 +245,7 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
     startTransition(async () => {
       const result = await createEventAction(formData);
       if (result.success) {
-        setSuccess("Event posted successfully and broadcasted in real-time!");
-        
-        // Reset states
-        setTitle("");
-        setDescription("");
-        setDate("");
-        setSelectedFiles([]);
-        setPreviews([]);
-        if (fileInputRef.current) fileInputRef.current.value = "";
-
-        setTimeout(() => setSuccess(null), 4000);
+        handlePostSuccess();
       } else {
         setError(result.error || "Failed to create event.");
       }
@@ -325,13 +397,18 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
               {/* Submit Creator */}
               <Button 
                 type="submit" 
-                disabled={isPending}
+                disabled={isPending || isUploading}
                 className="bg-terracotta hover:bg-terracotta-hover text-white font-bold uppercase tracking-wider py-5 rounded-lg w-full flex items-center justify-center gap-2 cursor-pointer"
               >
-                {isPending ? (
+                {isUploading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Processing Media & Uploading...</span>
+                    <span>Direct-Uploading Files to CDN...</span>
+                  </>
+                ) : isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Saving Recap in Database...</span>
                   </>
                 ) : (
                   <>

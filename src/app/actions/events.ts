@@ -36,46 +36,63 @@ export async function createEventAction(formData: FormData): Promise<CreateEvent
       return { success: false, error: "Invalid date format." };
     }
 
-    // 3. Extract media files
-    const mediaFiles = formData.getAll("media") as File[];
+    // 3. Extract media files (either pre-uploaded Vercel Blob URLs or raw Form Files)
+    const uploadedUrlsJson = formData.get("uploadedUrls") as string | null;
     const uploadedMedia: { url: string; type: string }[] = [];
 
-    // Whitelists of secure web-safe extensions to prevent stored XSS (excluding .svg, .html, etc.)
-    const ALLOWED_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
-    const ALLOWED_VIDEO_EXTENSIONS = [".mp4", ".mov", ".webm", ".m4v"];
-
-    for (const file of mediaFiles) {
-      // Filter out empty entries (sometimes empty files get submitted in forms)
-      if (file.size === 0 || !file.name) continue;
-
-      // Determine file type
-      const isVideo = file.type.startsWith("video/");
-      const isImage = file.type.startsWith("image/");
-
-      if (!isImage && !isVideo) {
-        return { success: false, error: `Unsupported file type: ${file.name}. Only images and videos are allowed.` };
+    if (uploadedUrlsJson) {
+      try {
+        const preUploaded: { url: string; type: "IMAGE" | "VIDEO" }[] = JSON.parse(uploadedUrlsJson);
+        for (const item of preUploaded) {
+          uploadedMedia.push({
+            url: item.url,
+            type: item.type,
+          });
+        }
+      } catch (err) {
+        return { success: false, error: "Failed to parse pre-uploaded media links." };
       }
+    } else {
+      // Fall back to standard server-side raw file uploads (local filesystem dev fallback)
+      const mediaFiles = formData.getAll("media") as File[];
 
-      // Verify file extension strictly to protect against MIME-type spoofing and stored script injections
-      const dotIndex = file.name.lastIndexOf(".");
-      const fileExt = dotIndex !== -1 ? file.name.slice(dotIndex).toLowerCase() : "";
+      // Whitelists of secure web-safe extensions to prevent stored XSS (excluding .svg, .html, etc.)
+      const ALLOWED_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
+      const ALLOWED_VIDEO_EXTENSIONS = [".mp4", ".mov", ".webm", ".m4v"];
 
-      const isAllowedImage = isImage && ALLOWED_IMAGE_EXTENSIONS.includes(fileExt);
-      const isAllowedVideo = isVideo && ALLOWED_VIDEO_EXTENSIONS.includes(fileExt);
+      for (const file of mediaFiles) {
+        // Filter out empty entries (sometimes empty files get submitted in forms)
+        if (file.size === 0 || !file.name) continue;
 
-      if (!isAllowedImage && !isAllowedVideo) {
-        return { 
-          success: false, 
-          error: `Security Check Failed: The file "${file.name}" has an invalid extension or content-type mismatch. Only standard web images (.png, .jpg, .jpeg, .webp, .gif) and videos (.mp4, .mov, .webm, .m4v) are allowed.` 
-        };
+        // Determine file type
+        const isVideo = file.type.startsWith("video/");
+        const isImage = file.type.startsWith("image/");
+
+        if (!isImage && !isVideo) {
+          return { success: false, error: `Unsupported file type: ${file.name}. Only images and videos are allowed.` };
+        }
+
+        // Verify file extension strictly to protect against MIME-type spoofing and stored script injections
+        const dotIndex = file.name.lastIndexOf(".");
+        const fileExt = dotIndex !== -1 ? file.name.slice(dotIndex).toLowerCase() : "";
+
+        const isAllowedImage = isImage && ALLOWED_IMAGE_EXTENSIONS.includes(fileExt);
+        const isAllowedVideo = isVideo && ALLOWED_VIDEO_EXTENSIONS.includes(fileExt);
+
+        if (!isAllowedImage && !isAllowedVideo) {
+          return { 
+            success: false, 
+            error: `Security Check Failed: The file "${file.name}" has an invalid extension or content-type mismatch. Only standard web images (.png, .jpg, .jpeg, .webp, .gif) and videos (.mp4, .mov, .webm, .m4v) are allowed.` 
+          };
+        }
+
+        // Upload file using our dynamic storage engine
+        const fileUrl = await uploadFile(file);
+        uploadedMedia.push({
+          url: fileUrl,
+          type: isVideo ? "VIDEO" : "IMAGE",
+        });
       }
-
-      // Upload file using our dynamic storage engine
-      const fileUrl = await uploadFile(file);
-      uploadedMedia.push({
-        url: fileUrl,
-        type: isVideo ? "VIDEO" : "IMAGE",
-      });
     }
 
     // 4. Save Event and Media in a transaction
@@ -165,4 +182,12 @@ export async function getEvents() {
     console.error("Failed to fetch events:", error);
     return [];
   }
+}
+
+/**
+ * Helper server action to check if Vercel Blob storage is configured in the environment.
+ * If true, the client-side component uploads files directly to bypass Vercel request body limits.
+ */
+export async function isBlobConfiguredAction(): Promise<boolean> {
+  return typeof process.env.BLOB_READ_WRITE_TOKEN === "string" && process.env.BLOB_READ_WRITE_TOKEN.length > 0;
 }
