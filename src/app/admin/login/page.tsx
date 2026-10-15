@@ -53,21 +53,21 @@ export default function LoginPage() {
 
   return (
     <div className="flex-grow flex items-center justify-center min-h-[80vh] bg-gradient-to-b from-background-primary to-secondary px-6 py-16 sm:px-8 lg:px-12 relative overflow-hidden font-sans">
-      {/* Decorative background pattern */}
-      <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#C26747_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+      {/* Decorative background pattern with LogoShape red */}
+      <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(#F61416_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
 
       <div className="w-full max-w-md animate-fade-in relative z-10">
 
-        <Card className="border border-border/60 bg-background-primary/95 backdrop-blur-sm shadow-2xl shadow-black/5 rounded-3xl overflow-hidden">
+        <Card className="border border-border bg-background-primary/95 backdrop-blur-sm shadow-2xl shadow-black/5 rounded-3xl overflow-hidden">
           {/* Header Banner */}
-          <div className="bg-deep-teal px-8 py-10 text-center text-white relative overflow-hidden">
+          <div className="bg-black px-8 py-10 text-center text-white relative overflow-hidden border-b border-primary/20">
             {/* Subtle gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
             <div className="relative z-10 space-y-2">
               <h1 className="font-poppins text-2xl sm:text-3xl font-semibold tracking-tight">
                 Admin Sign In
               </h1>
-              <p className="text-white/50 text-xs font-poppins font-light tracking-widest uppercase">
+              <p className="text-white/60 text-xs font-poppins font-light tracking-widest uppercase">
                 Church Management Console
               </p>
             </div>
@@ -92,7 +92,7 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               {/* Username Input */}
               <div className="space-y-2">
-                <label className="text-[11px] font-poppins font-semibold uppercase tracking-[0.2em] text-teal-black/60 block">
+                <label className="text-[11px] font-poppins font-semibold uppercase tracking-[0.2em] text-foreground/60 block">
                   Username
                 </label>
                 <Input
@@ -100,8 +100,8 @@ export default function LoginPage() {
                   type="text"
                   placeholder="Username"
                   disabled={isPending}
-                  className={`bg-white border text-teal-black font-poppins focus:ring-terracotta focus:border-terracotta rounded-xl h-12 px-4 text-sm ${
-                    errors.username ? "border-red-400 focus:ring-red-400" : "border-background-secondary"
+                  className={`bg-white border text-foreground font-poppins focus:ring-primary focus:border-primary rounded-xl h-12 px-4 text-sm ${
+                    errors.username ? "border-red-400 focus:ring-red-400" : "border-border"
                   }`}
                 />
                 {errors.username && (
@@ -113,7 +113,7 @@ export default function LoginPage() {
 
               {/* Password Input */}
               <div className="space-y-2">
-                <label className="text-[11px] font-poppins font-semibold uppercase tracking-[0.2em] text-teal-black/60 block">
+                <label className="text-[11px] font-poppins font-semibold uppercase tracking-[0.2em] text-foreground/60 block">
                   Password
                 </label>
                 <Input
@@ -121,8 +121,8 @@ export default function LoginPage() {
                   type="password"
                   placeholder="Password"
                   disabled={isPending}
-                  className={`bg-white border text-teal-black font-poppins focus:ring-terracotta focus:border-terracotta rounded-xl h-12 px-4 text-sm ${
-                    errors.password ? "border-red-400 focus:ring-red-400" : "border-background-secondary"
+                  className={`bg-white border text-foreground font-poppins focus:ring-primary focus:border-primary rounded-xl h-12 px-4 text-sm ${
+                    errors.password ? "border-red-400 focus:ring-red-400" : "border-border"
                   }`}
                 />
                 {errors.password && (
@@ -136,7 +136,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isPending}
-                className="w-full bg-terracotta hover:bg-terracotta-hover text-white py-6 rounded-xl font-poppins font-semibold tracking-[0.1em] uppercase transition-all duration-300 shadow-lg shadow-terracotta/15 flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 mt-3 text-sm"
+                className="w-full bg-primary hover:bg-brand-red-hover text-white py-6 rounded-xl font-poppins font-semibold tracking-[0.1em] uppercase transition-all duration-300 shadow-lg shadow-primary/25 flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 mt-3 text-sm"
               >
                 {isPending ? (
                   <>

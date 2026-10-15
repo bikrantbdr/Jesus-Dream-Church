@@ -271,7 +271,7 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
     <div className="space-y-12">
       {/* 1. Live SSE Update Notification Banner */}
       {liveBannerText && (
-        <div className="bg-terracotta text-white px-6 py-4 rounded-2xl shadow-lg shadow-terracotta/10 flex items-center justify-between animate-bounce">
+        <div className="bg-primary text-white px-6 py-4 rounded-2xl shadow-lg shadow-primary/20 flex items-center justify-between animate-bounce">
           <div className="flex items-center gap-3">
             <Sparkles className="h-5 w-5 animate-pulse" />
             <span className="text-sm font-bold tracking-wide uppercase">{liveBannerText}</span>
@@ -284,13 +284,13 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
 
       {/* 2. ADMIN PANEL OVERLAY */}
       {isAdmin && (
-        <Card className="border-2 border-dashed border-terracotta/40 bg-background-primary shadow-lg rounded-3xl overflow-hidden animate-fade-in">
-          <div className="bg-deep-teal text-white px-6 py-4 flex items-center justify-between border-b border-terracotta/20">
+        <Card className="border-2 border-dashed border-primary/30 bg-background-primary shadow-lg rounded-3xl overflow-hidden animate-fade-in">
+          <div className="bg-black text-white px-6 py-4 flex items-center justify-between border-b border-primary/20">
             <div className="flex items-center gap-2">
-              <Plus className="h-5 w-5 text-terracotta" />
+              <Plus className="h-5 w-5 text-primary" />
               <h2 className="font-serif text-lg font-bold">Admin Panel: Post Service Event</h2>
             </div>
-            <span className="text-[10px] uppercase font-bold tracking-widest text-background-secondary bg-white/10 px-3 py-1 rounded-full border border-white/10">
+            <span className="text-[10px] uppercase font-bold tracking-widest text-white/80 bg-white/10 px-3 py-1 rounded-full border border-white/10">
               Uploader Dashboard
             </span>
           </div>
@@ -352,7 +352,7 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
                 {/* Drag / Drop Area */}
                 <div 
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-background-secondary hover:border-terracotta/40 rounded-2xl p-6 text-center cursor-pointer transition-colors bg-white/50"
+                  className="border-2 border-dashed border-border hover:border-primary/40 rounded-2xl p-6 text-center cursor-pointer transition-colors bg-white/50"
                 >
                   <input 
                     ref={fileInputRef}
@@ -363,16 +363,16 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
                     disabled={isPending}
                     className="hidden"
                   />
-                  <Upload className="h-8 w-8 mx-auto text-teal-black/55 mb-2 hover:scale-105 transition-transform" />
-                  <p className="text-xs font-semibold text-teal-black">Click to Browse Images & Videos</p>
-                  <p className="text-[10px] text-teal-black/60 mt-1">Supports JPEG, PNG, MP4, MOV (Multiple Selection)</p>
+                  <Upload className="h-8 w-8 mx-auto text-foreground/55 mb-2 hover:scale-105 transition-transform" />
+                  <p className="text-xs font-semibold text-foreground">Click to Browse Images & Videos</p>
+                  <p className="text-[10px] text-foreground/60 mt-1">Supports JPEG, PNG, MP4, MOV (Multiple Selection)</p>
                 </div>
 
                 {/* Previews Grid */}
                 {previews.length > 0 && (
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
                     {previews.map((preview, index) => (
-                      <div key={index} className="relative rounded-xl overflow-hidden border border-background-secondary h-24 group shadow-sm bg-black">
+                      <div key={index} className="relative rounded-xl overflow-hidden border border-border h-24 group shadow-sm bg-black">
                         {preview.type === "VIDEO" ? (
                           <div className="h-full w-full flex items-center justify-center text-white relative">
                             <video src={preview.url} className="h-full w-full object-cover opacity-60" />
@@ -384,7 +384,7 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
                         <button
                           type="button"
                           onClick={() => removeSelectedFile(index)}
-                          className="absolute top-1.5 right-1.5 bg-black/60 text-white rounded-full p-1 hover:bg-terracotta hover:text-white transition-colors cursor-pointer"
+                          className="absolute top-1.5 right-1.5 bg-black/60 text-white rounded-full p-1 hover:bg-primary hover:text-white transition-colors cursor-pointer"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -398,7 +398,7 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
               <Button 
                 type="submit" 
                 disabled={isPending || isUploading}
-                className="bg-terracotta hover:bg-terracotta-hover text-white font-bold uppercase tracking-wider py-5 rounded-lg w-full flex items-center justify-center gap-2 cursor-pointer"
+                className="bg-primary hover:bg-brand-red-hover text-white font-bold uppercase tracking-wider py-5 rounded-lg w-full flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-primary/20"
               >
                 {isUploading ? (
                   <>
@@ -433,7 +433,7 @@ export default function EventFeed({ initialEvents, isAdmin }: EventFeedProps) {
             </p>
           </div>
         ) : (
-          <div className="relative pl-6 md:pl-10 border-l border-deep-teal/10 space-y-12">
+          <div className="relative pl-6 md:pl-10 border-l border-black/10 space-y-12">
             {initialEvents.map((event) => (
               <EventCard 
                 key={event.id}
@@ -520,8 +520,8 @@ function EventCard({ event, isAdmin, isPending, onDelete }: EventCardProps) {
       {/* Timeline Node (Interactive dot indicator centered relative to padding) */}
       <div className="absolute -left-[32px] md:-left-[48px] top-6 z-10">
         <div className="relative flex h-4 w-4">
-          <div className="absolute -inset-1.5 rounded-full bg-terracotta/10 animate-ping group-hover:bg-terracotta/25 transition-all duration-300" />
-          <div className="relative rounded-full h-4 w-4 bg-white border-[3.5px] border-terracotta shadow-md group-hover:scale-110 transition-transform duration-300" />
+          <div className="absolute -inset-1.5 rounded-full bg-primary/10 animate-ping group-hover:bg-primary/25 transition-all duration-300" />
+          <div className="relative rounded-full h-4 w-4 bg-white border-[3.5px] border-primary shadow-md group-hover:scale-110 transition-transform duration-300" />
         </div>
       </div>
 
@@ -529,7 +529,7 @@ function EventCard({ event, isAdmin, isPending, onDelete }: EventCardProps) {
       <Card className="border border-border/80 bg-white/70 backdrop-blur-sm shadow-sm rounded-3xl overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
         <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-start gap-4 pb-4">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-terracotta/5 border border-terracotta/10 text-xs font-bold text-terracotta uppercase tracking-wider">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/5 border border-primary/15 text-xs font-bold text-primary uppercase tracking-wider">
               <Calendar className="h-3.5 w-3.5" />
               <span>
                 {eventDate.toLocaleDateString("en-US", { 
@@ -540,7 +540,7 @@ function EventCard({ event, isAdmin, isPending, onDelete }: EventCardProps) {
                 })}
               </span>
             </div>
-            <CardTitle className="font-serif text-2xl font-bold text-deep-teal pt-1 tracking-wide">
+            <CardTitle className="font-serif text-2xl font-bold text-black pt-1 tracking-wide">
               {event.title}
             </CardTitle>
           </div>
@@ -597,7 +597,7 @@ function EventCard({ event, isAdmin, isPending, onDelete }: EventCardProps) {
                           preload="metadata"
                         />
                         <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                          <div className="h-11 w-11 rounded-full bg-white/90 text-deep-teal flex items-center justify-center shadow-lg group-hover:bg-terracotta group-hover:text-white group-hover:scale-105 transition-all duration-300">
+                          <div className="h-11 w-11 rounded-full bg-white/90 text-black flex items-center justify-center shadow-lg group-hover:bg-primary group-hover:text-white group-hover:scale-105 transition-all duration-300">
                             <Play className="h-4 w-4 fill-current ml-0.5" />
                           </div>
                         </div>
@@ -651,7 +651,7 @@ function EventCard({ event, isAdmin, isPending, onDelete }: EventCardProps) {
           {isGalleryOpen && (
             <div className="relative w-full flex flex-col items-center space-y-4">
               <div className="text-center w-full px-12 pb-2">
-                <span className="text-terracotta font-bold text-[10px] uppercase tracking-widest">
+                <span className="text-primary font-bold text-[10px] uppercase tracking-widest">
                   Event Media Gallery
                 </span>
                 <h3 className="font-serif text-lg font-bold text-white truncate max-w-lg mx-auto">
@@ -708,8 +708,8 @@ function EventCard({ event, isAdmin, isPending, onDelete }: EventCardProps) {
                   {/* Shadcn Navigation Controls (Responsive floating offsets) */}
                   {event.media.length > 1 && (
                     <>
-                      <CarouselPrevious className="left-2 sm:-left-12 bg-black/60 hover:bg-terracotta text-white border-white/10 hover:border-transparent transition-colors" />
-                      <CarouselNext className="right-2 sm:-right-12 bg-black/60 hover:bg-terracotta text-white border-white/10 hover:border-transparent transition-colors" />
+                      <CarouselPrevious className="left-2 sm:-left-12 bg-black/60 hover:bg-primary text-white border-white/10 hover:border-transparent transition-colors" />
+                      <CarouselNext className="right-2 sm:-right-12 bg-black/60 hover:bg-primary text-white border-white/10 hover:border-transparent transition-colors" />
                     </>
                   )}
                 </Carousel>

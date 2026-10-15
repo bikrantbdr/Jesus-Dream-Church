@@ -59,7 +59,7 @@ export default function Navbar({ username }: NavbarProps) {
               className="h-12 w-auto hover:scale-105 transition-transform duration-300 drop-shadow-sm"
               priority
             />
-            <span className="font-poppins font-bold text-lg sm:text-xl tracking-[0.2em] uppercase text-deep-teal group-hover:text-terracotta transition-colors duration-300">
+            <span className="font-poppins font-bold text-lg sm:text-xl tracking-[0.2em] uppercase text-black group-hover:text-primary transition-colors duration-300">
               JESUS DREAM
             </span>
           </Link>
@@ -73,17 +73,17 @@ export default function Navbar({ username }: NavbarProps) {
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative py-2 text-xs font-bold uppercase tracking-[0.15em] text-deep-teal/70 hover:text-terracotta transition-all duration-300 group"
+                className="relative py-2 text-xs font-bold uppercase tracking-[0.15em] text-black/75 hover:text-primary transition-all duration-300 group"
               >
-                <span className={`transition-colors duration-300 ${isActive ? "text-terracotta" : "group-hover:text-terracotta"}`}>
+                <span className={`transition-colors duration-300 ${isActive ? "text-primary font-extrabold" : "group-hover:text-primary"}`}>
                   {link.label}
                 </span>
                 
                 {/* Sleek dynamic indicator dot */}
                 <span 
-                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-terracotta transition-all duration-300 ease-out ${
+                  className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary transition-all duration-300 ease-out ${
                     isActive 
-                      ? "opacity-100 scale-100" 
+                      ? "opacity-100 scale-100 shadow-sm shadow-primary/50" 
                       : "opacity-0 scale-0 group-hover:opacity-40 group-hover:scale-75"
                   }`}
                 />
@@ -95,21 +95,21 @@ export default function Navbar({ username }: NavbarProps) {
         {/* User / Authentication Area (Only visible when logged in as admin) */}
         <div className="hidden md:flex items-center">
           {username && (
-            <div className="flex items-center gap-3 bg-secondary/60 border border-border/80 px-4 py-1.5 rounded-full text-xs animate-fade-in shadow-sm select-none">
+            <div className="flex items-center gap-3 bg-secondary border border-border/80 px-4 py-1.5 rounded-full text-xs animate-fade-in shadow-sm select-none">
               <div className="flex items-center gap-1.5">
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
                 </span>
-                <span className="font-bold text-teal-black flex items-center gap-1">
-                  <Shield className="h-3.5 w-3.5 text-terracotta" />
+                <span className="font-bold text-foreground flex items-center gap-1">
+                  <Shield className="h-3.5 w-3.5 text-primary" />
                   <span>Admin: {username}</span>
                 </span>
               </div>
-              <div className="w-[1px] h-3 bg-deep-teal/15" />
+              <div className="w-[1px] h-3 bg-black/15" />
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-1 text-teal-black/50 hover:text-terracotta transition-colors duration-300 cursor-pointer font-bold uppercase tracking-wider text-[10px]"
+                className="flex items-center gap-1 text-black/50 hover:text-primary transition-colors duration-300 cursor-pointer font-bold uppercase tracking-wider text-[10px]"
               >
                 <LogOut className="h-3 w-3" />
                 <span>Logout</span>
@@ -122,7 +122,7 @@ export default function Navbar({ username }: NavbarProps) {
         <div className="flex md:hidden">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="inline-flex items-center justify-center p-2 rounded-full text-deep-teal hover:text-terracotta hover:bg-secondary/60 focus:outline-none transition-all duration-300"
+            className="inline-flex items-center justify-center p-2 rounded-full text-black hover:text-primary hover:bg-primary/5 focus:outline-none transition-all duration-300"
           >
             <span className="sr-only">Open main menu</span>
             {mobileMenuOpen ? <X className="h-5 w-5 animate-fade-in" /> : <Menu className="h-5 w-5 animate-fade-in" />}
@@ -132,7 +132,7 @@ export default function Navbar({ username }: NavbarProps) {
 
       {/* Mobile Drawer (Clean, matching typography logo style) */}
       {mobileMenuOpen && (
-        <div className="md:hidden animate-fade-in bg-white/95 border-b border-secondary/50 shadow-lg absolute top-full left-0 right-0 z-40">
+        <div className="md:hidden animate-fade-in bg-white/95 border-b border-border shadow-lg absolute top-full left-0 right-0 z-40 backdrop-blur-md">
           <div className="px-4 py-4 space-y-1 sm:px-6">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
@@ -143,24 +143,24 @@ export default function Navbar({ username }: NavbarProps) {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs font-bold tracking-[0.15em] uppercase transition-all ${
                     isActive
-                      ? "bg-secondary text-terracotta border-l-4 border-terracotta"
-                      : "text-deep-teal hover:bg-secondary/50 hover:text-terracotta"
+                      ? "bg-primary/5 text-primary border-l-4 border-primary font-extrabold"
+                      : "text-black/80 hover:bg-secondary hover:text-primary"
                   }`}
                 >
                   <span>{link.label}</span>
-                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-terracotta" />}
+                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
                 </Link>
               );
             })}
 
             {/* Mobile Admin session */}
             {username && (
-              <div className="pt-4 border-t border-secondary mt-4 px-2 animate-fade-in">
+              <div className="pt-4 border-t border-border mt-4 px-2 animate-fade-in">
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-[10px] text-teal-black font-bold uppercase tracking-widest px-2 select-none">
+                  <div className="flex items-center gap-2 text-[10px] text-foreground font-bold uppercase tracking-widest px-2 select-none">
                     <span className="relative flex h-1.5 w-1.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
                     </span>
                     <span>Admin Session Active</span>
                   </div>
@@ -169,7 +169,7 @@ export default function Navbar({ username }: NavbarProps) {
                       setMobileMenuOpen(false);
                       handleLogout();
                     }}
-                    className="w-full flex items-center justify-center gap-2 bg-secondary hover:bg-secondary/80 text-deep-teal font-bold py-3 px-4 rounded-xl transition-all border border-border cursor-pointer text-[10px] uppercase tracking-widest"
+                    className="w-full flex items-center justify-center gap-2 bg-secondary hover:bg-secondary/80 text-foreground font-bold py-3 px-4 rounded-xl transition-all border border-border cursor-pointer text-[10px] uppercase tracking-widest hover:text-primary"
                   >
                     <LogOut className="h-3.5 w-3.5" />
                     <span>Sign Out Session</span>

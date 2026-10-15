@@ -24,16 +24,16 @@ export default async function EventsPage() {
   return (
     <div className="flex flex-col w-full animate-fade-in bg-background-primary pb-20">
       {/* Header Section */}
-      <section className="bg-gradient-to-b from-white to-secondary text-deep-teal py-20 sm:py-24 lg:py-28 border-b border-border relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#C26747_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+      <section className="bg-gradient-to-b from-white via-white to-secondary text-foreground py-20 sm:py-24 lg:py-28 border-b border-border relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(#F61416_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
-          <span className="inline-block text-terracotta font-bold text-xs uppercase tracking-[0.25em] bg-secondary border border-border px-4 py-1.5 rounded-full">
+          <span className="inline-block text-primary font-bold text-xs uppercase tracking-[0.25em] bg-primary/5 border border-primary/15 px-4 py-1.5 rounded-full">
             Active Fellowship Feed
           </span>
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-deep-teal leading-tight">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-black leading-tight">
             Service Recaps & Media
           </h1>
-          <p className="text-base sm:text-lg text-teal-black/80 max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="text-base sm:text-lg text-foreground/80 max-w-2xl mx-auto font-light leading-relaxed">
             Relive our latest services and browse shared pictures and videos of our fellowship, baptisms, and outreaches in Frankfurt.
           </p>
         </div>
@@ -72,19 +72,19 @@ export default async function EventsPage() {
 
         {/* If logged in as admin, show custom admin state indicator */}
         {isAdmin && (
-          <div className="mb-8 p-4 bg-teal-50 border border-deep-teal/20 rounded-3xl flex items-center justify-between gap-4 shadow-sm">
+          <div className="mb-8 p-4 bg-red-50/80 border border-primary/20 rounded-3xl flex items-center justify-between gap-4 shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 bg-deep-teal rounded-full flex items-center justify-center text-white">
-                <Sparkles className="h-4 w-4 text-terracotta animate-spin" />
+              <div className="h-9 w-9 bg-primary rounded-full flex items-center justify-center text-white shadow-sm">
+                <Sparkles className="h-4 w-4 text-white animate-spin" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-deep-teal">Authorized Admin Active</h4>
-                <p className="text-[10px] text-teal-black/60">You are logged in as <span className="font-bold">{username}</span>. You can now delete posts or upload new service recaps instantly.</p>
+                <h4 className="text-xs font-bold text-primary">Authorized Admin Active</h4>
+                <p className="text-[10px] text-foreground/70">You are logged in as <span className="font-bold text-black">{username}</span>. You can now delete posts or upload new service recaps instantly.</p>
               </div>
             </div>
             <Link
               href="/"
-              className="bg-deep-teal hover:bg-teal-black text-white text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-full transition-all"
+              className="bg-black hover:bg-primary text-white text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded-full transition-all"
             >
               Back to Home
             </Link>
