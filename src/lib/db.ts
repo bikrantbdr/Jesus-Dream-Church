@@ -3,7 +3,10 @@ import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const prismaClientSingleton = () => {
-  const dbUrl = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_wbhkOcvSK7Y9@ep-autumn-lab-alswu7mg-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl) {
+    throw new Error("DATABASE_URL environment variable is not defined");
+  }
   
   const pool = new Pool({ connectionString: dbUrl });
   const adapter = new PrismaPg(pool);
